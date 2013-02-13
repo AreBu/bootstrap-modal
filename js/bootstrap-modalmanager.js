@@ -56,7 +56,7 @@
 					if (modal && modal.isShown){
 						setTimeout(
 							function(){
-								if ($target.height()!=$target.data('height') || $target.width()!=$target.data('width'))
+								if ($target.height()!=$target.data('modalheight') || $target.width()!=$target.data('modalwidth'))
 									modal.layout()
               }
 							,$target.data('repositionwait') || that.options.repositionWait || 300);
@@ -109,7 +109,7 @@
 
 						var complete = function () {
 							that.setFocus();
-							modal.$element.triggerHandler('shown');
+							modal.$element.trigger('shown');
 						};
 
 						transition ?

@@ -58,7 +58,7 @@
 
 			if (this.isShown) return;
 
-			this.$element.triggerHandler(e);
+			this.$element.trigger(e);
 
 			if (e.isDefaultPrevented()) return;
 
@@ -74,7 +74,7 @@
 
 			e = $.Event('hide');
 
-			this.$element.triggerHandler(e);
+			this.$element.trigger(e);
 
 			if (!this.isShown || e.isDefaultPrevented()) return (this.isShown = false);
 
@@ -127,7 +127,8 @@
 
 			this.$element.find('.modal-body')
 				.css('overflow', '')
-				.css(prop, '');
+				.css('max-height', '')
+				.css('height', '');
 
 			var modalOverflow = $(window).height() - 10 < this.$element.height();
 
@@ -147,8 +148,8 @@
 					.removeClass('modal-overflow');
 			}
       
-			this.$element.data('height',this.$element.height())
-			this.$element.data('width',this.$element.width())
+			this.$element.data('modalheight',this.$element.height())
+			this.$element.data('modalwidth',this.$element.width())
       
 		},
 
@@ -213,7 +214,7 @@
 		hideModal: function () {
 			this.$element
 				.hide()
-				.triggerHandler('hidden');
+				.trigger('hidden');
 
 			var prop = this.options.height ? 'height' : 'max-height';
 			var value = this.options.height || this.options.maxHeight;
@@ -299,7 +300,7 @@
 
 		destroy: function () {
 			var e = $.Event('destroy');
-			this.$element.triggerHandler(e);
+			this.$element.trigger(e);
 			if (e.isDefaultPrevented()) return;
 
 			this.teardown();
@@ -365,11 +366,17 @@
 	* ============== */
 
 	$(function () {
-		$(document).off('click.modal').on('click.modal.data-api', '[data-toggle="modal"]', function ( e ) {
+		$(document).off('click.modal').on('click.modal.data-api', '[data-toggle|="modal"]', function ( e ) {
 			var $this = $(this),
+				toggle = $this.attr('data-toggle'),
 				href = $this.attr('href'),
 				$target = $($this.attr('data-target') || (href && href.replace(/.*(?=#[^\s]+$)/, ''))), //strip for ie7
 				option = $target.data('modal') ? 'toggle' : $.extend({ remote: !/#/.test(href) && href }, $target.data(), $this.data());
+
+			if (toggle!='modal'){
+				if ($target.data('modal')) option = $target.data('modal').isShown? 'layout':'show';
+				$target.toggleClass(toggle);
+			}
 
 			e.preventDefault();
 			$target
